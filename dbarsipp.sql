@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `tbl_arsip_keluar` (
   `tujuan_surat` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `id_tujuan` int NOT NULL,
   `perihal` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `status` enum('0','1') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '0',
+  `status` enum('0','1','2') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '0',
   `id_departemen` int NOT NULL,
   `id_pengirim` int NOT NULL,
   `file` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `tbl_arsip_keluar` (
 -- Dumping data for table dbarsipp.tbl_arsip_keluar: ~0 rows (approximately)
 DELETE FROM `tbl_arsip_keluar`;
 INSERT INTO `tbl_arsip_keluar` (`id_arsip_keluar`, `no_surat`, `tanggal_surat`, `tanggal_diterima`, `tujuan_surat`, `id_tujuan`, `perihal`, `status`, `id_departemen`, `id_pengirim`, `file`, `tanggal_kirim`, `created_at`) VALUES
-	(2, '2025/XIIV/344/KLR', '2025-07-14', '2025-07-14', 'Penugas keluar kota Banjarmasin', 3, 'Rapat Daerah', '1', 4, 2, '1752503152_cuci makan.jpg', '2025-07-14', '2025-07-14');
+        (2, '2025/XIIV/344/KLR', '2025-07-14', '2025-07-14', 'Penugas keluar kota Banjarmasin', 3, 'Rapat Daerah', '1', 4, 2, '', '2025-07-14', '2025-07-14');
 
 -- Dumping structure for table dbarsipp.tbl_barang
 DROP TABLE IF EXISTS `tbl_barang`;
