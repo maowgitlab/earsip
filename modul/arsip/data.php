@@ -102,21 +102,15 @@ if (!empty($search) && strpos($search, ' - ') !== false) {
             }
           ?>
         </td>
-        <td><?= $data['status'] == "0" ? "<span class='badge badge-danger'>Menunggu verifikasi Kadis</span>" : "<span class='badge badge-success'>Terverifikasi</span>" ?></td>
+        <td><?= $data['status'] == "0" ? "<span class='badge badge-success'>Aktif</span>" : "<span class='badge badge-secondary'>Inaktif</span>" ?></td>
         <td>
           <?php if($_SESSION['username'] == 'sekretariat') : ?>
             <a href="?halaman=arsip_surat&hal=edit&id=<?=$data['id_arsip']?>" class="btn btn-primary">Edit</a>
-            <a href="?halaman=arsip_surat&hal=hapus&id=<?=$data['id_arsip']?>" class="btn btn-danger" 
+            <a href="?halaman=arsip_surat&hal=hapus&id=<?=$data['id_arsip']?>" class="btn btn-danger"
               onclick="return confirm('Apakah yakin ingin menghapus data ini?')">Hapus</a>
             <?php if($data['status'] == "1") : ?>
-              <a href="?halaman=arsip_surat_kirim&id=<?=$data['id_arsip']?>" class="btn btn-success" 
+              <a href="?halaman=arsip_surat_kirim&id=<?=$data['id_arsip']?>" class="btn btn-success"
               onclick="return confirm('Apakah yakin ingin mengirim data ini?')">Kirim</a>
-            <?php endif; ?>
-          <?php endif; ?>
-          <?php if($_SESSION['username'] == 'kadisdag') : ?>
-            <?php if($data['status'] == "0") : ?>
-              <a href="?halaman=arsip_surat_verifikasi&id=<?=$data['id_arsip']?>" class="btn btn-success" 
-              onclick="return confirm('Anda ingin mengverifikasi data ini?')">Verifikasi</a>
             <?php endif; ?>
           <?php endif; ?>
           <?php if($data['status'] == "1") : ?>

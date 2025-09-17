@@ -91,6 +91,7 @@ if (!isset($_SESSION['username']) || $_SESSION['username'] != 'kadisdag') {
                         <div class="button-group">
                             <a href="menu.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Kembali ke Menu</a>
                             <a href="tambah_barang.php" class="btn btn-primary"><i class="bi bi-plus"></i> Tambah Barang</a>
+                            <a href="permohonan_barang.php" class="btn btn-info"><i class="bi bi-journal-plus"></i> Permohonan Barang</a>
                             <div class="dropdown">
                                 <button class="btn btn-success dropdown-toggle" id="dropdownLaporan">
                                     <i class="bi bi-file-earmark-text"></i> Laporan

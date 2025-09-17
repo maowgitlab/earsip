@@ -22,37 +22,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id_pengirim = intval($_POST['id_pengirim']);
     $tanggal_kirim = !empty($_POST['tanggal_kirim']) ? mysqli_real_escape_string($koneksi, $_POST['tanggal_kirim']) : null;
     $created_at = date('Y-m-d');
-
-    // File upload handling
-    $file_name = '';
-    if (!empty($_FILES['file']['name'])) {
-        $file_name = time() . '_' . $_FILES['file']['name'];
-        $target_file = "file/" . $file_name;
-        move_uploaded_file($_FILES['file']['tmp_name'], $target_file);
-    } elseif ($action == 'edit' && !empty($data['file'])) {
-        $file_name = $data['file'];
-    }
+    $file_name = $action == 'edit' && !empty($data['file']) ? mysqli_real_escape_string($koneksi, $data['file']) : '';
 
     if ($action == 'edit' && $id > 0) {
         // Update query
-        $query = "UPDATE tbl_arsip_keluar SET 
-                  no_surat='$no_surat', 
-                  tanggal_surat='$tanggal_surat', 
-                  tanggal_diterima='$tanggal_diterima', 
-                  tujuan_surat='$tujuan_surat', 
-                  id_tujuan=$id_tujuan, 
-                  perihal='$perihal', 
-                  id_departemen=$id_departemen, 
-                  id_pengirim=$id_pengirim, 
-                  file='$file_name', 
-                  tanggal_kirim=" . ($tanggal_kirim ? "'$tanggal_kirim'" : "NULL") . ", 
-                  created_at='$created_at' 
+        $query = "UPDATE tbl_arsip_keluar SET
+                  no_surat='$no_surat',
+                  tanggal_surat='$tanggal_surat',
+                  tanggal_diterima='$tanggal_diterima',
+                  tujuan_surat='$tujuan_surat',
+                  id_tujuan=$id_tujuan,
+                  perihal='$perihal',
+                  id_departemen=$id_departemen,
+                  id_pengirim=$id_pengirim,
+                  tanggal_kirim=" . ($tanggal_kirim ? "'$tanggal_kirim'" : "NULL") . ",
+                  created_at='$created_at'
                   WHERE id_arsip_keluar=$id";
     } else {
         // Insert query
-        $query = "INSERT INTO tbl_arsip_keluar 
-                  (no_surat, tanggal_surat, tanggal_diterima, tujuan_surat, id_tujuan, perihal, status, id_departemen, id_pengirim, file, tanggal_kirim, created_at) 
-                  VALUES 
+        $query = "INSERT INTO tbl_arsip_keluar
+                  (no_surat, tanggal_surat, tanggal_diterima, tujuan_surat, id_tujuan, perihal, status, id_departemen, id_pengirim, file, tanggal_kirim, created_at)
+                  VALUES
                   ('$no_surat', '$tanggal_surat', '$tanggal_diterima', '$tujuan_surat', $id_tujuan, '$perihal', '0', $id_departemen, $id_pengirim, '$file_name', " . ($tanggal_kirim ? "'$tanggal_kirim'" : "NULL") . ", '$created_at')";
     }
 
@@ -70,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?= $action == 'edit' ? 'Edit Data Surat Keluar' : 'Form Arsip Data Surat Keluar' ?>
     </div>
     <div class="card-body">
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST">
             <div class="form-group">
                 <label>No Surat</label>
                 <input type="text" name="no_surat" class="form-control" value="<?= isset($data['no_surat']) ? $data['no_surat'] : '' ?>" 
@@ -132,13 +122,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
                     ?>
                 </select>
-            </div>
-            <div class="form-group">
-                <label>File</label>
-                <input type="file" name="file" class="form-control">
-                <?php if ($action == 'edit' && !empty($data['file'])) : ?>
-                    <small>File saat ini: <a href="file/<?= $data['file'] ?>" target="_blank"><?= $data['file'] ?></a></small>
-                <?php endif; ?>
             </div>
             <div class="form-group">
                 <label>Tanggal Kirim</label>

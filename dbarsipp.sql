@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `tbl_arsip_keluar` (
   `tujuan_surat` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `id_tujuan` int NOT NULL,
   `perihal` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `status` enum('0','1') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '0',
+  `status` enum('0','1','2') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '0',
   `id_departemen` int NOT NULL,
   `id_pengirim` int NOT NULL,
   `file` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `tbl_arsip_keluar` (
 -- Dumping data for table dbarsipp.tbl_arsip_keluar: ~0 rows (approximately)
 DELETE FROM `tbl_arsip_keluar`;
 INSERT INTO `tbl_arsip_keluar` (`id_arsip_keluar`, `no_surat`, `tanggal_surat`, `tanggal_diterima`, `tujuan_surat`, `id_tujuan`, `perihal`, `status`, `id_departemen`, `id_pengirim`, `file`, `tanggal_kirim`, `created_at`) VALUES
-	(2, '2025/XIIV/344/KLR', '2025-07-14', '2025-07-14', 'Penugas keluar kota Banjarmasin', 3, 'Rapat Daerah', '1', 4, 2, '1752503152_cuci makan.jpg', '2025-07-14', '2025-07-14');
+        (2, '2025/XIIV/344/KLR', '2025-07-14', '2025-07-14', 'Penugas keluar kota Banjarmasin', 3, 'Rapat Daerah', '1', 4, 2, '', '2025-07-14', '2025-07-14');
 
 -- Dumping structure for table dbarsipp.tbl_barang
 DROP TABLE IF EXISTS `tbl_barang`;
@@ -198,10 +198,54 @@ CREATE TABLE IF NOT EXISTS `tbl_stok_barang` (
 -- Dumping data for table dbarsipp.tbl_stok_barang: ~4 rows (approximately)
 DELETE FROM `tbl_stok_barang`;
 INSERT INTO `tbl_stok_barang` (`id_stok`, `id_barang`, `jumlah`, `tipe_transaksi`, `keterangan`, `id_pegawai`, `created_at`) VALUES
-	(1, 1, 100, 'masuk', 'Pembelian kertas A4', 1, '2025-07-03'),
-	(2, 1, 20, 'keluar', 'Penggunaan untuk laporan', 3, '2025-07-04'),
-	(3, 3, 5, 'masuk', 'Pembelian tinta printer', 2, '2025-07-03'),
-	(6, 7, 15, 'masuk', 'dibeli anang', 3, '2025-07-03');
+        (1, 1, 100, 'masuk', 'Pembelian kertas A4', 1, '2025-07-03'),
+        (2, 1, 20, 'keluar', 'Penggunaan untuk laporan', 3, '2025-07-04'),
+        (3, 3, 5, 'masuk', 'Pembelian tinta printer', 2, '2025-07-03'),
+        (6, 7, 15, 'masuk', 'dibeli anang', 3, '2025-07-03');
+
+-- Dumping structure for table dbarsipp.tbl_permintaan_barang
+DROP TABLE IF EXISTS `tbl_permintaan_barang`;
+CREATE TABLE IF NOT EXISTS `tbl_permintaan_barang` (
+  `id_permintaan` int NOT NULL AUTO_INCREMENT,
+  `kode_permintaan` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `id_barang` int NOT NULL,
+  `jumlah` int NOT NULL,
+  `id_departemen` int NOT NULL,
+  `pemohon` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `keterangan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `status` enum('menunggu','disetujui','ditolak','selesai') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'menunggu',
+  `catatan_pimpinan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `tanggal_permohonan` date DEFAULT NULL,
+  `tanggal_persetujuan` date DEFAULT NULL,
+  `pimpinan` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  PRIMARY KEY (`id_permintaan`),
+  UNIQUE KEY `kode_permintaan` (`kode_permintaan`),
+  KEY `id_barang` (`id_barang`),
+  KEY `id_departemen` (`id_departemen`),
+  CONSTRAINT `tbl_permintaan_barang_ibfk_1` FOREIGN KEY (`id_barang`) REFERENCES `tbl_barang` (`id_barang`) ON DELETE RESTRICT,
+  CONSTRAINT `tbl_permintaan_barang_ibfk_2` FOREIGN KEY (`id_departemen`) REFERENCES `tbl_departemen` (`id_departemen`) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Dumping data for table dbarsipp.tbl_permintaan_barang: ~0 rows (approximately)
+DELETE FROM `tbl_permintaan_barang`;
+
+-- Dumping structure for table dbarsipp.tbl_penyerahan_barang
+DROP TABLE IF EXISTS `tbl_penyerahan_barang`;
+CREATE TABLE IF NOT EXISTS `tbl_penyerahan_barang` (
+  `id_penyerahan` int NOT NULL AUTO_INCREMENT,
+  `id_permintaan` int NOT NULL,
+  `tanggal_penyerahan` date DEFAULT NULL,
+  `diserahkan_oleh` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `diterima_oleh` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `keterangan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_penyerahan`),
+  UNIQUE KEY `id_permintaan` (`id_permintaan`),
+  CONSTRAINT `tbl_penyerahan_barang_ibfk_1` FOREIGN KEY (`id_permintaan`) REFERENCES `tbl_permintaan_barang` (`id_permintaan`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Dumping data for table dbarsipp.tbl_penyerahan_barang: ~0 rows (approximately)
+DELETE FROM `tbl_penyerahan_barang`;
 
 -- Dumping structure for table dbarsipp.tbl_user
 DROP TABLE IF EXISTS `tbl_user`;

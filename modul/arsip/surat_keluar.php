@@ -48,7 +48,6 @@ if (!empty($search) && strpos($search, ' - ') !== false) {
                 <th style='text-align: center'>Departemen</th>
                 <th style='text-align: center'>Pengirim</th>
                 <th style='text-align: center'>Tujuan</th>
-                <th style='text-align: center'>File</th>
                 <th style='text-align: center'>Status</th>
                 <th style='text-align: center'>Aksi</th>
             </tr>
@@ -97,18 +96,17 @@ if (!empty($search) && strpos($search, ' - ') !== false) {
                     <td><?= htmlspecialchars($data['nama_departemen']) ?></td>
                     <td><?= htmlspecialchars($data['nama_pengirim']) ?></td>
                     <td><?= htmlspecialchars($data['nama_tujuan']) ?></td>
-                    <td> 
+                    <td>
                         <?php
-                        if (empty($data['file'])) {
-                            echo " - ";
+                        if ($data['status'] === "0") {
+                            echo "<span class='badge badge-warning'>Menunggu Persetujuan</span>";
+                        } elseif ($data['status'] === "1") {
+                            echo "<span class='badge badge-success'>Disetujui</span>";
                         } else {
-                        ?>
-                            <a href="file/<?= $data['file'] ?>" target="_blank">Lihat File</a>
-                        <?php
+                            echo "<span class='badge badge-danger'>Ditolak</span>";
                         }
                         ?>
                     </td>
-                    <td><?= $data['status'] == "0" ? "<span class='badge badge-danger'>Menunggu Verifikasi Kadis</span>" : "<span class='badge badge-success'>Terverifikasi</span>" ?></td>
                     <td>
                         <?php if ($_SESSION['username'] == 'sekretariat') : ?>
                             <a href="?halaman=edit_keluar&hal=edit&id=<?= $data['id_arsip_keluar'] ?>" class="btn btn-primary">Edit</a>
@@ -119,23 +117,26 @@ if (!empty($search) && strpos($search, ' - ') !== false) {
                                    onclick="return confirm('Apakah yakin ingin mengirim data ini?')">Kirim</a> -->
                             <?php endif; ?>
                         <?php endif; ?>
-                        <?php if ($_SESSION['username'] == 'kadisdag') : ?>
-                            <?php if ($data['status'] == "0") : ?>
-                                <a href="?halaman=verifikasi_keluar&id=<?= $data['id_arsip_keluar'] ?>" class="btn btn-success" 
-                                   onclick="return confirm('Anda ingin mengverifikasi data ini?')">Verifikasi</a>
-                            <?php endif; ?>
+                        <?php if ($_SESSION['username'] == 'kadisdag' && $data['status'] == "0") : ?>
+                            <a href="?halaman=verifikasi_keluar&id=<?= $data['id_arsip_keluar'] ?>&aksi=setujui" class="btn btn-success"
+                               onclick="return confirm('Setujui surat keluar ini?')">Setujui</a>
+                            <a href="?halaman=verifikasi_keluar&id=<?= $data['id_arsip_keluar'] ?>&aksi=tolak" class="btn btn-danger"
+                               onclick="return confirm('Tolak surat keluar ini?')">Tolak</a>
                         <?php endif; ?>
                         <?php if ($data['status'] == "1") : ?>
                             <a href="?halaman=cetak_data_keluar&id=<?= $data['id_arsip_keluar'] ?>" class="btn btn-secondary">Cetak <i class="bi bi-printer"></i></a>
                         <?php endif; ?>
+                        <?php if ($data['status'] == "2") : ?>
+                            <span class="text-muted">Menunggu revisi sekretariat</span>
+                        <?php endif; ?>
                     </td>
                 </tr>
-            <?php 
-                endwhile; 
+            <?php
+                endwhile;
             } else {
             ?>
                 <tr>
-                    <td colspan="12" style="text-align: center;">Tidak ada data ditemukan.</td>
+                    <td colspan="11" style="text-align: center;">Tidak ada data ditemukan.</td>
                 </tr>
             <?php } ?>
         </table>
