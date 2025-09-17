@@ -44,36 +44,45 @@ if (!isset($_SESSION['username']) || $_SESSION['username'] != 'kadisdag') {
         <thead>
             <tr>
                 <th style="text-align: center;">No.</th>
+                <th style="text-align: center;">Kode Permohonan</th>
                 <th style="text-align: center;">Nama Barang</th>
                 <th style="text-align: center;">Departemen</th>
                 <th style="text-align: center;">Jumlah</th>
-                <th style="text-align: center;">Tanggal</th>
-                <th style="text-align: center;">Pegawai</th>
-                <th style="text-align: center;">Keterangan</th>
+                <th style="text-align: center;">Tanggal Permohonan</th>
+                <th style="text-align: center;">Status</th>
+                <th style="text-align: center;">Pemohon</th>
+                <th style="text-align: center;">Pejabat Menyetujui</th>
+                <th style="text-align: center;">Tanggal Penyerahan</th>
+                <th style="text-align: center;">Penerima Barang</th>
             </tr>
         </thead>
         <tbody>
             <?php
             $no = 1;
             $query = "
-                SELECT b.nama_barang, d.nama_departemen, s.jumlah, s.created_at, p.nama as nama_pegawai, s.keterangan
-                FROM tbl_stok_barang s
-                JOIN tbl_barang b ON s.id_barang = b.id_barang
-                JOIN tbl_departemen d ON b.id_departemen = d.id_departemen
-                LEFT JOIN tbl_pegawai p ON s.id_pegawai = p.id_pegawai
-                WHERE s.tipe_transaksi = 'keluar'
-                ORDER BY s.created_at DESC";
+                SELECT p.kode_permintaan, p.jumlah, p.tanggal_permohonan, p.status, p.pemohon, p.pimpinan,
+                       b.nama_barang, d.nama_departemen,
+                       pen.tanggal_penyerahan, pen.diterima_oleh
+                FROM tbl_permintaan_barang p
+                JOIN tbl_barang b ON p.id_barang = b.id_barang
+                JOIN tbl_departemen d ON p.id_departemen = d.id_departemen
+                LEFT JOIN tbl_penyerahan_barang pen ON pen.id_permintaan = p.id_permintaan
+                ORDER BY p.tanggal_permohonan DESC, p.id_permintaan DESC";
             $result = mysqli_query($koneksi, $query);
             while ($row = mysqli_fetch_array($result)) {
                 ?>
                 <tr>
                     <td style="text-align: center;"><?php echo $no++; ?></td>
+                    <td style="text-align: center;"><?php echo htmlspecialchars($row['kode_permintaan']); ?></td>
                     <td style="text-align: center;"><?php echo htmlspecialchars($row['nama_barang']); ?></td>
                     <td style="text-align: center;"><?php echo htmlspecialchars($row['nama_departemen']); ?></td>
-                    <td style="text-align: center;"><?php echo $row['jumlah']; ?> unit</td>
-                    <td style="text-align: center;"><?php echo $row['created_at']; ?></td>
-                    <td style="text-align: center;"><?php echo htmlspecialchars($row['nama_pegawai'] ?? '-'); ?></td>
-                    <td style="text-align: center;"><?php echo htmlspecialchars($row['keterangan'] ?? '-'); ?></td>
+                    <td style="text-align: center;"><?php echo $row['jumlah']; ?></td>
+                    <td style="text-align: center;"><?php echo $row['tanggal_permohonan']; ?></td>
+                    <td style="text-transform: capitalize; text-align: center;"><?php echo htmlspecialchars($row['status']); ?></td>
+                    <td style="text-align: center;"><?php echo htmlspecialchars($row['pemohon']); ?></td>
+                    <td style="text-align: center;"><?php echo htmlspecialchars($row['pimpinan'] ?? '-'); ?></td>
+                    <td style="text-align: center;"><?php echo htmlspecialchars($row['tanggal_penyerahan'] ?? '-'); ?></td>
+                    <td style="text-align: center;"><?php echo htmlspecialchars($row['diterima_oleh'] ?? '-'); ?></td>
                 </tr>
                 <?php
             }
